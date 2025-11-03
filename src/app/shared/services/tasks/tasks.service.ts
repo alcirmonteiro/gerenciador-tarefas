@@ -11,6 +11,6 @@ export class TasksService {
   httpClient = inject(HttpClient);
 
   getAll(): Observable<ITask[]> {
-    return this.httpClient.get<ITask[]>('/tasks');
+    return this.httpClient.get<ITask[]>('/api/tasks');
   }   
 }
