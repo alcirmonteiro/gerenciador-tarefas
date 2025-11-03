@@ -1,20 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ITask } from '../../interfaces/task.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TasksService {
 
+  constructor(private readonly httpClient: HttpClient) {}
+
   getAll(): Observable<ITask[]> {
-    return of([
-      {title: 'Item 1', completed: false},
-      {title: 'Item 2', completed: false},
-      {title: 'Item 3', completed: false},
-      {title: 'Item 4', completed: true},
-      {title: 'Item 5', completed: true},
-      {title: 'Item 6', completed: true},
-   ]);
-  }
+    return this.httpClient.get<ITask[]>('/tasks');
+  }   
 }
