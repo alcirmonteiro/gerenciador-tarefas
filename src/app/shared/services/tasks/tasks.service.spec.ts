@@ -2,7 +2,7 @@ import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { TasksService } from './tasks.service';
 import { ITask } from '../../interfaces/task.interface';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient,  } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('TasksService', () => {
@@ -13,7 +13,7 @@ describe('TasksService', () => {
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
       ]
     });
     service = TestBed.inject(TasksService);
@@ -28,8 +28,9 @@ describe('TasksService', () => {
       result = tasks
     });
 
-    const request = httpTestingController.expectOne('/tasks'); 
-    const fakeTaskes: ITask[] = [
+    const request = httpTestingController.expectOne('/tasks');
+
+    const fakeTasks = [
       {title: 'Item 1', completed: false},
       {title: 'Item 2', completed: false},
       {title: 'Item 3', completed: false},
@@ -37,10 +38,11 @@ describe('TasksService', () => {
       {title: 'Item 5', completed: true},
       {title: 'Item 6', completed: true},
     ];
-    
-    request.flush(fakeTaskes);
+
+    request.flush(fakeTasks);
 
     tick();
-    expect(result).toEqual(fakeTaskes);
+
+    expect(result).toEqual(fakeTasks);
   }));
 });
