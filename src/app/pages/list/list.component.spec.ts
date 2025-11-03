@@ -3,10 +3,10 @@ import { ListComponent } from './list.component';
 import { By } from '@angular/platform-browser';
 import { TasksService } from 'src/app/shared/services/tasks/tasks.service';
 import { of } from 'rxjs';
+import { FakeTasksService } from "@testing/mocks/fake-tasks.service";
 
-class FakeTasksService implements TasksService {
-  getAll = jest.fn();
-}
+
+
 
 describe('ListComponent', () => {
   let component: ListComponent;

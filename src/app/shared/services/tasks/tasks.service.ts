@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ITask } from '../../interfaces/task.interface';
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class TasksService {
 
-  constructor(private readonly httpClient: HttpClient) {}
+  httpClient = inject(HttpClient);
 
   getAll(): Observable<ITask[]> {
     return this.httpClient.get<ITask[]>('/tasks');
