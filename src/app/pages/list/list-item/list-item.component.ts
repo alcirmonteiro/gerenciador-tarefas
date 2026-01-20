@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ITask } from 'src/app/shared/interfaces/task.interface';
 
 @Component({
@@ -10,5 +10,11 @@ import { ITask } from 'src/app/shared/interfaces/task.interface';
 })
 export class ListItemComponent {
   task = input.required<ITask>();
+
+  complete = output<ITask>();
+
+  onComplete() {
+    this.complete.emit(this.task());
+  }
 
 }
