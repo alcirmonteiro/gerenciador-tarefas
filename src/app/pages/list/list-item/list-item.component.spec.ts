@@ -5,27 +5,47 @@ import { ITask } from 'src/app/shared/interfaces/task.interface';
 import { TestHelper } from '@testing/helpers/test-helper';
 import { Component } from '@angular/core';
 
+async function setup(fakeTask: ITask) {
+  @Component({
+    standalone: true,
+    imports: [ListItemComponent],
+    template: `<app-list-item 
+      [task]="task" 
+      (complete)="onCompleteTask($event)" 
+    ></app-list-item>`
+  })
+  class HostComponent {
+    task = fakeTask;
+
+    onCompleteTask(){}
+  }    
+
+  await TestBed.configureTestingModule({
+    imports: [HostComponent]
+  })
+  .compileComponents();
+
+  const fixture = TestBed.createComponent(HostComponent);
+  const testHelper = new TestHelper(fixture);       
+
+  return { fixture, testHelper };
+}
+
 describe('ListItemComponent', () => {
-  // let fixture: ComponentFixture<HostComponent>;
-  // let testHelper: TestHelper<ListItemComponent>;
-
-  // beforeEach(async () => {
-
-  // });
-  
-  // it.skip('deve renderizar o título da tarefa', () => {
+  it('deve renderizar o título da tarefa', async() => {
     
-  //   const fakeTask: ITask = {
-  //     title: 'Item 1',
-  //     completed: false 
-  //    };
+    const fakeTask: ITask = {
+      title: 'Item 1',
+      completed: false 
+     };
 
-  //   fixture.componentRef.setInput('task', fakeTask);
-  //   fixture.detectChanges();
+     const { fixture, testHelper } = await setup(fakeTask);
 
-  //   const text = testHelper.getTextContentByTestId('list-item-task-title').trim();
-  //   expect(text).toBe('Item 1');
-  // });
+    fixture.detectChanges();
+
+    const text = testHelper.getTextContentByTestId('list-item-task-title').trim();
+    expect(text).toBe('Item 1');
+  });
 
   it('deve emitir um evento ao completar a tarefa', async() => {
     const fakeTask: ITask = {
@@ -33,33 +53,13 @@ describe('ListItemComponent', () => {
       completed: false 
      };
 
-    @Component({
-      standalone: true,
-      imports: [ListItemComponent],
-      template: `<app-list-item 
-        [task]="task" 
-        (complete)="onCompleteTask($event)" 
-      ></app-list-item>`
-    })
-    class HostComponent {
-      task = fakeTask;
-
-      onCompleteTask(){}
-    }    
-
-    await TestBed.configureTestingModule({
-      imports: [HostComponent]
-    })
-    .compileComponents();
-
-    const fixture = TestBed.createComponent(HostComponent);
-    const testHelper = new TestHelper(fixture);   
+    const { fixture, testHelper } = await setup(fakeTask);
     
     const onCompleteTaskSpy = jest.spyOn(fixture.componentInstance, 'onCompleteTask');
     
     fixture.detectChanges();
-
-    const completeBtnDebugEl = testHelper.queryByTestId('list-item-completed-action');
+                                                          
+    const completeBtnDebugEl = testHelper.queryByTestId('list-item-complete-action');
     completeBtnDebugEl.triggerEventHandler('click', null);
 
     expect(onCompleteTaskSpy).toHaveBeenCalled();
