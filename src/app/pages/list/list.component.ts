@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ITask } from 'src/app/shared/interfaces/task.interface';
 import { TasksService } from 'src/app/shared/services/tasks/tasks.service';
@@ -14,20 +14,24 @@ import { ListItemComponent } from './list-item/list-item.component';
 })
 export class ListComponent implements OnInit {
   
-  constructor(
-    private readonly taskService: TasksService
-  ){};
+  taskService = inject(TasksService); 
+  
+  tasks = signal<ITask[]>([]);
+  completedTasks = computed(() => this.tasks().filter(task => task.completed));
+  pandingTasks = computed(() => this.tasks().filter(task => !task.completed));
 
   ngOnInit(): void {
     this.taskService.getAll().subscribe(tasks => this.tasks.set(tasks));
   }
 
-  tasks = signal<ITask[]>([]);
+  onComplete(task: ITask): void {
+    this.taskService.patch(task.id, {completed: true}).subscribe(task => {
+      this.updateTask(task);
+    });
+  }  
 
-  completedTasks = computed(() => this.tasks().filter(task => task.completed));
-  pandingTasks = computed(() => this.tasks().filter(task => !task.completed));
-
-
-
+  private updateTask(task: ITask): void {
+    this.tasks.update(tasks => tasks.map(t => t.id === task.id ? task : t)); 
+  }
 
 }

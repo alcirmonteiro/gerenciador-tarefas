@@ -6,6 +6,8 @@ import { of } from 'rxjs';
 import { FakeTasksService } from "@testing/mocks/fake-tasks.service";
 import { ListItemComponent } from './list-item/list-item.component';
 import { FakeListItemComponent } from '@testing/mocks/fake-list-item.componente';
+import { ITask } from 'src/app/shared/interfaces/task.interface';
+import { TestHelper } from '@testing/helpers/test-helper';
 
 
 
@@ -14,6 +16,7 @@ describe('ListComponent', () => {
   let component: ListComponent;
   let fixture: ComponentFixture<ListComponent>;
   let tasksService: TasksService;
+  let testHelper: TestHelper<ListComponent>; 
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -36,8 +39,14 @@ describe('ListComponent', () => {
     });
 
     await TestBed.compileComponents();
+    
+    fixture = TestBed.createComponent(ListComponent);
+
+    testHelper = new TestHelper(fixture);
 
     tasksService = TestBed.inject(TasksService);
+
+    
   });
 
   it('deve listar as tarefas', () => {
@@ -72,7 +81,34 @@ describe('ListComponent', () => {
     expect(completedItems[0].componentInstance.task()).toEqual({title: 'Item 4', completed: true});
     expect(completedItems[1].componentInstance.task()).toEqual({title: 'Item 5', completed: true});
     expect(completedItems[2].componentInstance.task()).toEqual({title: 'Item 6', completed: true});
+  });
 
+  describe('quando a tarefa está pendente', () => { 
+    it('deve completar uma tarefa', () => {
+      const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: false};
 
+      const faketasks: ITask[] = [fakeTask];
+
+      (tasksService.getAll as jest.Mock).mockReturnValue(of(faketasks));
+
+      const completedTask: ITask = { ...fakeTask, completed: true};
+
+      (tasksService.patch as jest.Mock).mockReturnValue(of(completedTask));
+
+      fixture.detectChanges();
+
+      expect(testHelper.queryByTestId('completed-list-item')).toBeNull();
+
+      const todoItemDebugEl = testHelper.queryByTestId('todo-list-item');
+
+      (todoItemDebugEl.componentInstance as FakeListItemComponent).complete.emit(fakeTask);
+
+      expect(tasksService.patch).toHaveBeenCalledWith(fakeTask.id, {completed: true});
+
+      fixture.detectChanges();
+
+      expect(testHelper .queryByTestId('completed-list-item')).toBeTruthy();
+      
+    });
   });
 });

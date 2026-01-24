@@ -30,13 +30,13 @@ describe('TasksService', () => {
 
     const request = httpTestingController.expectOne('/api/tasks');
 
-    const fakeTasks = [
-      {title: 'Item 1', completed: false},
-      {title: 'Item 2', completed: false},
-      {title: 'Item 3', completed: false},
-      {title: 'Item 4', completed: true},
-      {title: 'Item 5', completed: true},
-      {title: 'Item 6', completed: true},
+    const fakeTasks: ITask[] = [
+      {id: '1', title: 'Item 1', completed: false},
+      {id: '2', title: 'Item 2', completed: false},
+      {id: '3', title: 'Item 3', completed: false},
+      {id: '4', title: 'Item 4', completed: true},
+      {id: '5', title: 'Item 5', completed: true},
+      {id: '6', title: 'Item 6', completed: true},
     ];
 
     request.flush(fakeTasks);
@@ -45,4 +45,28 @@ describe('TasksService', () => {
 
     expect(result).toEqual(fakeTasks);
   }));
+
+  it('patch() deve atualizar uma tarefa', fakeAsync(() => {
+
+    const fakeTask: ITask = {id: '1', title: 'Item 1', completed: true};
+
+    let result: ITask | null = null;
+
+    service.patch(fakeTask.id , {completed: true}).subscribe(response => {
+      result = response;
+    });
+
+    const request = httpTestingController.expectOne((req) => {
+      return req.method === 'PATCH' && req.url === '/api/tasks/1';
+    });
+
+    const fakeResponse: ITask = { ...fakeTask, completed: true };
+
+    request.flush({...fakeTask, completed: true});
+
+    tick();
+
+    expect(result).toEqual(fakeResponse);
+  }));  
+    
 });
