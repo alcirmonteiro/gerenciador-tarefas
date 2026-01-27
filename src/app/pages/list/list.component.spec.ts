@@ -111,4 +111,36 @@ describe('ListComponent', () => {
       
     });
   });
+
+describe('quando a tarefa está concluída', () => { 
+    it('deve marcar a tarefa como pendente', () => {
+      const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: true};
+
+      const faketasks: ITask[] = [fakeTask];
+
+      (tasksService.getAll as jest.Mock).mockReturnValue(of(faketasks));
+
+      const notCompletedTask: ITask = { ...fakeTask, completed: false};
+
+      (tasksService.patch as jest.Mock).mockReturnValue(of(notCompletedTask));
+
+      fixture.detectChanges();
+
+      expect(testHelper.queryByTestId('todo-list-item')).toBeNull();
+
+      const completedItemDebugEl = testHelper.queryByTestId('completed-list-item');
+
+      (completedItemDebugEl.componentInstance as FakeListItemComponent).notComplete.emit(fakeTask);
+
+      expect(tasksService.patch).toHaveBeenCalledWith(fakeTask.id, {completed: false});
+
+      fixture.detectChanges();
+
+      expect(testHelper.queryByTestId('completed-list-item')).toBeNull();
+      expect(testHelper .queryByTestId('todo-list-item')).toBeTruthy();
+      
+    });
+  });
+
+
 });

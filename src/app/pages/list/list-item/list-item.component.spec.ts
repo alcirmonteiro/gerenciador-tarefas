@@ -12,12 +12,15 @@ async function setup(fakeTask: ITask) {
     template: `<app-list-item 
       [task]="task" 
       (complete)="onCompleteTask($event)" 
+      (notComplete)="onNotComplete($event)"
     ></app-list-item>`
   })
   class HostComponent {
     task = fakeTask;
 
     onCompleteTask(){}
+
+    onNotComplete(){}
   }    
 
   await TestBed.configureTestingModule({
@@ -35,6 +38,7 @@ describe('ListItemComponent', () => {
   it('deve renderizar o título da tarefa', async() => {
     
     const fakeTask: ITask = {
+      id: '1',
       title: 'Item 1',
       completed: false 
      };
@@ -47,22 +51,93 @@ describe('ListItemComponent', () => {
     expect(text).toBe('Item 1');
   });
 
-  it('deve emitir um evento ao completar a tarefa', async() => {
-    const fakeTask: ITask = {
-      title: 'Item 1',
-      completed: false 
-     };
+  describe('quando a tarefa não estiver concluída', () => {
 
-    const { fixture, testHelper } = await setup(fakeTask);
-    
-    const onCompleteTaskSpy = jest.spyOn(fixture.componentInstance, 'onCompleteTask');
-    
-    fixture.detectChanges();
-                                                          
-    const completeBtnDebugEl = testHelper.queryByTestId('list-item-complete-action');
-    completeBtnDebugEl.triggerEventHandler('click', null);
+    it('deve renderizar o botão de concluir tarefa', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: false 
+      };
 
-    expect(onCompleteTaskSpy).toHaveBeenCalled();
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      fixture.detectChanges();
+                                                            
+      const completeBtnDebugEl = testHelper.queryByTestId('list-item-complete-action');
+      
+      expect(completeBtnDebugEl).toBeTruthy();
 
+     const notCompleteBtnDebugEl = testHelper.queryByTestId('list-item-mark-as-pending-action');
+      
+      expect(notCompleteBtnDebugEl).toBeNull();
+    }); 
+
+    it('deve emitir um evento ao concluir a tarefa', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: false 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      const onCompleteTaskSpy = jest.spyOn(fixture.componentInstance, 'onCompleteTask');
+      
+      fixture.detectChanges();
+                                                            
+      const completeBtnDebugEl = testHelper.queryByTestId('list-item-complete-action');
+      completeBtnDebugEl.triggerEventHandler('click', null);
+
+      expect(onCompleteTaskSpy).toHaveBeenCalled();
+
+    });  
+  });
+
+ 
+  describe('quando a tarefa estiver concluída', () => {
+    it('deve renderizar o botão de marcar tarefa como pendente', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: true 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      fixture.detectChanges();
+                                                            
+      const completeBtnDebugEl = testHelper.queryByTestId('list-item-complete-action');
+      
+      expect(completeBtnDebugEl).toBeNull();
+
+     const notCompleteBtnDebugEl = testHelper.queryByTestId('list-item-mark-as-pending-action');
+      
+      expect(notCompleteBtnDebugEl).toBeTruthy();
+    }); 
+
+    it('deve emitir um evento que marque a tarefa como pendente', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: true 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      const onNotCompleteTaskSpy = jest.spyOn(fixture.componentInstance, 'onNotComplete');
+      
+      fixture.detectChanges();
+                                                            
+      const markpedingBtnDebugEl = testHelper.queryByTestId('list-item-mark-as-pending-action');
+      markpedingBtnDebugEl.triggerEventHandler('click', null);
+
+      expect(onNotCompleteTaskSpy).toHaveBeenCalled();
+
+    });  
   });  
+
+  
+
+
 });

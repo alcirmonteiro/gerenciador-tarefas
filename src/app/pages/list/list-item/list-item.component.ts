@@ -12,9 +12,15 @@ export class ListItemComponent {
   task = input.required<ITask>();
 
   complete = output<ITask>();
+  notComplete = output<ITask>();
 
   onComplete() {
     this.complete.emit(this.task());
   }
+
+  onMarkAsPending() {
+    this.notComplete.emit(this.task());
+  }
+
 
 }

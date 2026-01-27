@@ -13,7 +13,6 @@ import { ListItemComponent } from './list-item/list-item.component';
   styleUrl: './list.component.scss',
 })
 export class ListComponent implements OnInit {
-  
   taskService = inject(TasksService); 
   
   tasks = signal<ITask[]>([]);
@@ -29,6 +28,12 @@ export class ListComponent implements OnInit {
       this.updateTask(task);
     });
   }  
+
+  onNotComplete(task: ITask) {
+    this.taskService.patch(task.id, {completed: false}).subscribe(task => {
+      this.updateTask(task);
+    });
+  }
 
   private updateTask(task: ITask): void {
     this.tasks.update(tasks => tasks.map(t => t.id === task.id ? task : t)); 

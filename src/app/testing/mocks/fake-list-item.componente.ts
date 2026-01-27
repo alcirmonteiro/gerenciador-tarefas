@@ -10,7 +10,12 @@ import { ITask } from "src/app/shared/interfaces/task.interface";
 export class FakeListItemComponent implements ListItemComponent {
   task = input.required<ITask>();
   complete = output<ITask>();
+  notComplete = output<ITask>();
 
   onComplete(): void {
   }
+
+  onMarkAsPending(): void {
+  }
+
 }
