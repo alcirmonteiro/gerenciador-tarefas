@@ -1,5 +1,4 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-
 import { TasksService } from './tasks.service';
 import { ITask } from '../../interfaces/task.interface';
 import { provideHttpClient,  } from '@angular/common/http';
@@ -67,6 +66,27 @@ describe('TasksService', () => {
     tick();
 
     expect(result).toEqual(fakeResponse);
+  }));  
+
+  it('patch() deve remover uma tarefa', fakeAsync(() => {
+
+    const fakeTask: ITask = {id: '1', title: 'Item 1', completed: false};
+
+    let result: ITask | null = null;
+
+    service.delete(fakeTask.id).subscribe(response => {
+      result = response;
+    });
+
+    const request = httpTestingController.expectOne((req) => {
+      return req.method === 'DELETE' && req.url === '/api/tasks/1';
+    });
+
+    request.flush(fakeTask);
+
+    tick();
+
+    expect(result).toEqual(fakeTask);
   }));  
     
 });

@@ -12,4 +12,8 @@ export class TestHelper<T> {
     const debugEl = this.queryByTestId(testId);
     return debugEl ? debugEl.nativeElement.textContent : '';
   }
+
+  click(testId: string){
+    this.queryByTestId(testId).nativeElement.click();
+  }
 }

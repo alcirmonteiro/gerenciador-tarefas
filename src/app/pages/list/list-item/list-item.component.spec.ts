@@ -13,6 +13,7 @@ async function setup(fakeTask: ITask) {
       [task]="task" 
       (complete)="onCompleteTask($event)" 
       (notComplete)="onNotComplete($event)"
+      (remove)="onRemove($event)"
     ></app-list-item>`
   })
   class HostComponent {
@@ -21,6 +22,8 @@ async function setup(fakeTask: ITask) {
     onCompleteTask(){}
 
     onNotComplete(){}
+
+    onRemove(task: ITask){}
   }    
 
   await TestBed.configureTestingModule({
@@ -86,12 +89,31 @@ describe('ListItemComponent', () => {
       
       fixture.detectChanges();
                                                             
-      const completeBtnDebugEl = testHelper.queryByTestId('list-item-complete-action');
-      completeBtnDebugEl.triggerEventHandler('click', null);
+      testHelper.click('list-item-complete-action');
 
       expect(onCompleteTaskSpy).toHaveBeenCalled();
 
     });  
+
+    it('deve emitir um evento de remover tarefa', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: false 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      const onRemoveTaskSpy = jest.spyOn(fixture.componentInstance, 'onRemove');
+      
+      fixture.detectChanges();
+                                                  
+      testHelper.click('list-item-remove-action');
+
+      expect(onRemoveTaskSpy).toHaveBeenCalledWith(fakeTask);
+
+    });  
+
   });
 
  
@@ -111,7 +133,7 @@ describe('ListItemComponent', () => {
       
       expect(completeBtnDebugEl).toBeNull();
 
-     const notCompleteBtnDebugEl = testHelper.queryByTestId('list-item-mark-as-pending-action');
+      const notCompleteBtnDebugEl = testHelper.queryByTestId('list-item-mark-as-pending-action');
       
       expect(notCompleteBtnDebugEl).toBeTruthy();
     }); 
@@ -129,10 +151,28 @@ describe('ListItemComponent', () => {
       
       fixture.detectChanges();
                                                             
-      const markpedingBtnDebugEl = testHelper.queryByTestId('list-item-mark-as-pending-action');
-      markpedingBtnDebugEl.triggerEventHandler('click', null);
+      testHelper.click('list-item-mark-as-pending-action');
 
       expect(onNotCompleteTaskSpy).toHaveBeenCalled();
+
+    }); 
+
+    it('deve emitir um evento de remover tarefa', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: true 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      const onRemoveTaskSpy = jest.spyOn(fixture.componentInstance, 'onRemove');
+      
+      fixture.detectChanges();
+                                  
+      testHelper.click('list-item-remove-action');
+
+      expect(onRemoveTaskSpy).toHaveBeenCalledWith(fakeTask);
 
     });  
   });  

@@ -35,8 +35,18 @@ export class ListComponent implements OnInit {
     });
   }
 
+  onRemove(task: ITask) {
+    this.taskService.delete(task.id).subscribe(task => {
+      this.removeTask(task);
+    });
+  }  
+
   private updateTask(task: ITask): void {
     this.tasks.update(tasks => tasks.map(t => t.id === task.id ? task : t)); 
+  }
+
+  private removeTask(task: ITask): void {
+    this.tasks.update(tasks => tasks.filter(t => t.id !== task.id)); 
   }
 
 }

@@ -11,11 +11,15 @@ export class FakeListItemComponent implements ListItemComponent {
   task = input.required<ITask>();
   complete = output<ITask>();
   notComplete = output<ITask>();
+  remove = output<ITask>();
 
   onComplete(): void {
   }
 
   onMarkAsPending(): void {
+  }
+
+  onRemove(): void {
   }
 
 }

@@ -110,9 +110,31 @@ describe('ListComponent', () => {
       expect(testHelper .queryByTestId('completed-list-item')).toBeTruthy();
       
     });
+    it('deve remover uma tarefa', () => {
+      const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: false};
+
+      const faketasks: ITask[] = [fakeTask];
+
+      (tasksService.getAll as jest.Mock).mockReturnValue(of(faketasks));
+
+      (tasksService.delete as jest.Mock).mockReturnValue(of(fakeTask));
+
+      fixture.detectChanges();
+
+      const todoItemDebugEl = testHelper.queryByTestId('todo-list-item');
+
+      (todoItemDebugEl.componentInstance as FakeListItemComponent).remove.emit(fakeTask);
+
+      expect(tasksService.delete).toHaveBeenCalledWith(fakeTask.id);
+
+      fixture.detectChanges();
+
+      expect(testHelper.queryByTestId('todo-list-item')).toBeNull();
+      
+    });
   });
 
-describe('quando a tarefa está concluída', () => { 
+  describe('quando a tarefa está concluída', () => { 
     it('deve marcar a tarefa como pendente', () => {
       const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: true};
 
@@ -140,7 +162,32 @@ describe('quando a tarefa está concluída', () => {
       expect(testHelper .queryByTestId('todo-list-item')).toBeTruthy();
       
     });
+
+    it('deve remover uma tarefa', () => {
+      const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: true};
+
+      const faketasks: ITask[] = [fakeTask];
+
+      (tasksService.getAll as jest.Mock).mockReturnValue(of(faketasks));
+
+      (tasksService.delete as jest.Mock).mockReturnValue(of(fakeTask));
+
+      fixture.detectChanges();
+
+      const todoItemDebugEl = testHelper.queryByTestId('completed-list-item');
+
+      (todoItemDebugEl.componentInstance as FakeListItemComponent).remove.emit(fakeTask);
+
+      expect(tasksService.delete).toHaveBeenCalledWith(fakeTask.id);
+
+      fixture.detectChanges();
+
+      expect(testHelper.queryByTestId('completed-list-item')).toBeNull();
+      
+    });
   });
+
+
 
 
 });
