@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CreateTaskComponent } from './create-task.component';
 import { TestHelper } from '@testing/helpers/test-helper';
 import { TasksService } from 'src/app/shared/services/tasks/tasks.service';
-import { FakeTasksService } from '@testing/mocks/fake-tasks.service';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ITask, ITaskCreate } from 'src/app/shared/interfaces/task.interface';
+import { MockProvider } from 'ng-mocks';
 
 describe('CreateTaskComponent', () => {
   let fixture: ComponentFixture<CreateTaskComponent>;
@@ -16,12 +16,7 @@ describe('CreateTaskComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateTaskComponent],
-      providers: [
-        {
-          provide: TasksService,
-          useValue: FakeTasksService,
-        }
-      ],
+      providers: [ MockProvider(TasksService),],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateTaskComponent);
@@ -53,7 +48,7 @@ describe('CreateTaskComponent', () => {
 
     formDebugEl.triggerEventHandler('submit', null);
 
-    expect(taskService.post).toHaveBeenCalledWith({fakeTaskPayload});
+    expect(taskService.post).toHaveBeenCalledWith(fakeTaskPayload);
 
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/');
     
