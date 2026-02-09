@@ -13,8 +13,8 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": { 
-      "@testing/*": ["src/app/testing/*"],
+    "paths": {
+      "@testing/*": ["src/app/testing/*"]
     },
     "useDefineForClassFields": false,
     "esModuleInterop": true,

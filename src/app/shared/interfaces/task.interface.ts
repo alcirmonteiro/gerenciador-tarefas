@@ -3,3 +3,5 @@ export interface ITask {
   title: string,
   completed: boolean
 }
+
+export type ITaskCreate = Omit<ITask, 'id'>;

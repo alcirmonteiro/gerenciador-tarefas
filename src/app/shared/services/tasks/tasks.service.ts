@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ITask } from '../../interfaces/task.interface';
+import { ITask, ITaskCreate } from '../../interfaces/task.interface';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -17,8 +17,12 @@ export class TasksService {
     return this.httpClient.patch<ITask>(`/api/tasks/${id}`, payload);
   } 
 
-  delete(id: string) {
+  delete(id: string): Observable<ITask> {
     return this.httpClient.delete<ITask>(`/api/tasks/${id}`);
   }
+
+  post(payload: ITaskCreate): Observable<ITask> {
+    return this.httpClient.post<ITask>('/api/tasks/', payload);
+  } 
 
 }
