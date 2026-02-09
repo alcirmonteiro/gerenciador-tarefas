@@ -8,7 +8,7 @@
     {
       "id": "2",
       "title": "Item 2",
-      "completed": false
+      "completed": true
     },
     {
       "id": "3",
@@ -28,6 +28,16 @@
     {
       "id": "6",
       "title": "Item 6",
+      "completed": false
+    },
+    {
+      "id": "d7f6",
+      "title": "Nova tarefa",
+      "completed": true
+    },
+    {
+      "id": "1ea0",
+      "title": "Nova Tarefa 2.0",
       "completed": true
     }
   ]

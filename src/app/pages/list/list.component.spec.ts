@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ListComponent } from './list.component';
 import { By } from '@angular/platform-browser';
 import { TasksService } from 'src/app/shared/services/tasks/tasks.service';
@@ -7,9 +7,9 @@ import { ListItemComponent } from './list-item/list-item.component';
 import { ITask } from 'src/app/shared/interfaces/task.interface';
 import { TestHelper } from '@testing/helpers/test-helper';
 import { MockComponent, MockProvider } from 'ng-mocks';
-
-
-
+import { Location } from '@angular/common';
+import { provideRouter } from '@angular/router';
+import path from 'path';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -22,6 +22,10 @@ describe('ListComponent', () => {
       imports: [ListComponent],
       providers: [
         MockProvider(TasksService),
+        provideRouter([{
+          path: 'create', 
+          component: MockComponent(ListComponent)
+        }])
       ]
     });
 
@@ -41,7 +45,6 @@ describe('ListComponent', () => {
     testHelper = new TestHelper(fixture);
 
     tasksService = TestBed.inject(TasksService);
-
     
   });
 
@@ -183,5 +186,19 @@ describe('ListComponent', () => {
     });
   });
 
+  it('deve redirecionar para a rota de criação de tarefa', fakeAsync(() => {
+    const location = TestBed.inject(Location);
 
+    (tasksService.getAll as jest.Mock).mockReturnValue(of([]));
+
+    fixture.detectChanges();
+
+    expect(location.path()).toBe('');
+
+    testHelper.click('create-task-button');
+
+    tick(1000);
+
+    expect(location.path()).toBe('/create');
+  }));
 });
