@@ -8,6 +8,10 @@ export const appRoutes: Route[] = [
     {
         path: 'create',
         loadComponent: () => import('./pages/create-task/create-task.component').then(m => m.CreateTaskComponent)   
+    },
+    {
+        path: 'edit/:id',
+        loadComponent: () => import('./pages/edit-task/edit-task.component').then(m => m.EditTaskComponent)   
     }
 
 ];

@@ -25,4 +25,8 @@ export class TasksService {
     return this.httpClient.post<ITask>('/api/tasks/', payload);
   } 
 
+  put(id: string, payload: ITaskCreate): Observable<ITask> {
+    return this.httpClient.put<ITask>(`/api/tasks/${id}`, payload);
+  } 
+
 }
