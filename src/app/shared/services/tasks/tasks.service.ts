@@ -29,4 +29,8 @@ export class TasksService {
     return this.httpClient.put<ITask>(`/api/tasks/${id}`, payload);
   } 
 
+  getById(id: string): Observable<ITask> {
+    return this.httpClient.get<ITask>(`/api/tasks/${id}`);
+  }   
+
 }
