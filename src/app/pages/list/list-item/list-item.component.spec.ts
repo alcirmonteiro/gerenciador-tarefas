@@ -14,6 +14,7 @@ async function setup(fakeTask: ITask) {
       (complete)="onCompleteTask($event)" 
       (notComplete)="onNotComplete($event)"
       (remove)="onRemove($event)"
+      (edit)="onEdit($event)"
     ></app-list-item>`
   })
   class HostComponent {
@@ -24,6 +25,8 @@ async function setup(fakeTask: ITask) {
     onNotComplete(){}
 
     onRemove(task: ITask){}
+
+    onEdit(task: ITask){}
   }    
 
   await TestBed.configureTestingModule({
@@ -114,6 +117,25 @@ describe('ListItemComponent', () => {
 
     });  
 
+    it('deve emitir um evento de editar tarefa', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: false 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      const onEditTaskSpy = jest.spyOn(fixture.componentInstance, 'onEdit');
+      
+      fixture.detectChanges();
+                                                  
+      testHelper.click('list-item-edit-action');
+
+      expect(onEditTaskSpy).toHaveBeenCalledWith(fakeTask);
+
+    });  
+
   });
 
  
@@ -174,10 +196,24 @@ describe('ListItemComponent', () => {
 
       expect(onRemoveTaskSpy).toHaveBeenCalledWith(fakeTask);
 
+    }); 
+    
+    it('deve emitir um evento de editar tarefa', async() => {
+      const fakeTask: ITask = {
+        id: '1',
+        title: 'Item 1',
+        completed: true 
+      };
+
+      const { fixture, testHelper } = await setup(fakeTask);
+      
+      const onEditTaskSpy = jest.spyOn(fixture.componentInstance, 'onEdit');
+      
+      fixture.detectChanges();
+                                                  
+      testHelper.click('list-item-edit-action');
+
+      expect(onEditTaskSpy).toHaveBeenCalledWith(fakeTask);
     });  
   });  
-
-  
-
-
 });

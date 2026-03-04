@@ -1,5 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ListComponent } from './list.component';
+import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { By } from '@angular/platform-browser';
 import { TasksService } from 'src/app/shared/services/tasks/tasks.service';
 import { of } from 'rxjs';
@@ -22,10 +23,16 @@ describe('ListComponent', () => {
       imports: [ListComponent],
       providers: [
         MockProvider(TasksService),
-        provideRouter([{
-          path: 'create', 
-          component: MockComponent(ListComponent)
-        }])
+        provideRouter([
+          {
+            path: 'create', 
+            component: MockComponent(ListComponent)        
+          },
+          {
+            path: 'edit/:id', 
+            component: MockComponent(EditTaskComponent)
+          }
+        ])
       ]
     });
 
@@ -131,6 +138,29 @@ describe('ListComponent', () => {
       expect(testHelper.queryByTestId('todo-list-item')).toBeNull();
       
     });
+    it('deve redirecionar para a rota de edição de tarefa', fakeAsync(() => {
+      const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: false};
+
+      const faketasks: ITask[] = [fakeTask];
+
+      (tasksService.getAll as jest.Mock).mockReturnValue(of(faketasks));
+
+      fixture.detectChanges();
+
+      const todoItemDebugEl = testHelper.queryByTestId('todo-list-item');
+
+      (todoItemDebugEl.componentInstance as ListItemComponent).edit.emit(fakeTask);
+
+      fixture.detectChanges();
+
+      const location = TestBed.inject(Location);
+
+      tick();
+
+      expect(location.path()).toBe(`/edit/${fakeTask.id}`);
+      
+    }));
+
   });
 
   describe('quando a tarefa está concluída', () => { 
@@ -184,6 +214,29 @@ describe('ListComponent', () => {
       expect(testHelper.queryByTestId('completed-list-item')).toBeNull();
       
     });
+
+    it('deve redirecionar para a rota de edição de tarefa', fakeAsync(() => {
+      const fakeTask: ITask = {id:'1', title: 'Tarefa 1', completed: true};
+
+      const faketasks: ITask[] = [fakeTask];
+
+      (tasksService.getAll as jest.Mock).mockReturnValue(of(faketasks));
+
+      fixture.detectChanges();
+
+      const completedItemDebugEl = testHelper.queryByTestId('completed-list-item');
+
+      (completedItemDebugEl.componentInstance as ListItemComponent).edit.emit(fakeTask);
+
+      fixture.detectChanges();
+
+      const location = TestBed.inject(Location);
+
+      tick();
+
+      expect(location.path()).toBe(`/edit/${fakeTask.id}`);
+      
+    }));
   });
 
   it('deve redirecionar para a rota de criação de tarefa', fakeAsync(() => {

@@ -4,7 +4,7 @@ import { ITask } from 'src/app/shared/interfaces/task.interface';
 import { TasksService } from 'src/app/shared/services/tasks/tasks.service';
 import { NoItemsComponent } from './no-items/no-items.component';
 import { ListItemComponent } from './list-item/list-item.component';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
 })
 export class ListComponent implements OnInit {
   taskService = inject(TasksService); 
+  router = inject(Router); 
   
   tasks = signal<ITask[]>([]);
   completedTasks = computed(() => this.tasks().filter(task => task.completed));
@@ -48,6 +49,10 @@ export class ListComponent implements OnInit {
 
   private removeTask(task: ITask): void {
     this.tasks.update(tasks => tasks.filter(t => t.id !== task.id)); 
+  }
+
+  onEdit(task: ITask) {
+    this.router.navigate(['/edit', task.id]);
   }
 
 }
