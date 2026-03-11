@@ -7,10 +7,11 @@ import { of } from 'rxjs';
 import { ListItemComponent } from './list-item/list-item.component';
 import { ITask } from 'src/app/shared/interfaces/task.interface';
 import { TestHelper } from '@testing/helpers/test-helper';
-import { MockComponent, MockProvider } from 'ng-mocks';
+import { MockComponent, MockDirective, MockProvider } from 'ng-mocks';
 import { Location } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import path from 'path';
+import { ButtonDirective } from 'src/app/shared/directives/button/button.directive';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -38,10 +39,10 @@ describe('ListComponent', () => {
 
     TestBed.overrideComponent(ListComponent, {
       remove: {
-        imports: [ListItemComponent]
+        imports: [ListItemComponent, ButtonDirective]
       },
       add: {
-        imports: [MockComponent(ListItemComponent)]
+        imports: [MockComponent(ListItemComponent), MockDirective(ButtonDirective)]
       }
     });
 
