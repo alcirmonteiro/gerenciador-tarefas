@@ -16,6 +16,10 @@ export const appRoutes: Route[] = [
             task: getTaskByIdResolver
         },
         loadComponent: () => import('./pages/edit-task/edit-task.component').then(m => m.EditTaskComponent)   
+    },
+    {
+        path: 'login',
+        loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
     }
 
 ];
