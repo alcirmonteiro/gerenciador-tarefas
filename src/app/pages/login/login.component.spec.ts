@@ -6,16 +6,18 @@ import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthStoreService } from 'src/app/shared/stores/auth.store';
 
 describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let testHelper: TestHelper<LoginComponent>;
   let authService: AuthService;
   let router: Router;
+  let authStoreService: AuthStoreService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [MockProviders(AuthService, Router)],
+      providers: [MockProviders(AuthService, Router, AuthStoreService)],
       imports: [LoginComponent],
     }).compileComponents();
 
@@ -23,7 +25,8 @@ describe('LoginComponent', () => {
     testHelper = new TestHelper(fixture);
     authService = TestBed.inject(AuthService);
     router = TestBed.inject(Router);
-    
+    authStoreService = TestBed.inject(AuthStoreService);
+
     fixture.detectChanges();
   });
 
@@ -38,13 +41,15 @@ describe('LoginComponent', () => {
     testHelper.submitForm('login-form');
 
     expect(authService.login).toHaveBeenCalledWith(fakeEmail, fakePassword);
+
+    expect(authStoreService.setAsLoggedIn).toHaveBeenCalled();
+
     expect(router.navigateByUrl).toHaveBeenCalledWith('/');
-    
   });
 
   it('deve mostrar uma mensagem de erro quando a autenticação falhar', () => {
     const fakeEmail = 'errado@dominio.com';
-    const fakePassword = '123';
+    const fakePassword = '123456';
 
     expect(testHelper.queryByTestId('login-auth-failed')).toBeFalsy();    
 

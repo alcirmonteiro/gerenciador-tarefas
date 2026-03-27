@@ -20,11 +20,6 @@ class FakeComponent {
 
 
 describe('getTaskByIdResolver', () => {
-  const executeResolver: ResolveFn<Observable<ITask>> = (...resolverParameters) => 
-  TestBed.runInInjectionContext(() => 
-    getTaskByIdResolver(...resolverParameters)
-  );
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
