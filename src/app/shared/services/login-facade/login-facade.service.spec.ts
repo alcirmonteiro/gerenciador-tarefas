@@ -31,7 +31,7 @@ describe('LoginFacadeService', () => {
 
     (authService.login as jest.Mock).mockReturnValue(of( {token: 'fake-jwt-token'} ));
 
-    service.login('usuario', 'senha').subscribe(() => {
+    service.login(fakeEmail, fakePassword).subscribe(() => {
       result = true;
     });
 

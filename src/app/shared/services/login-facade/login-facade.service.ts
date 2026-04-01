@@ -12,7 +12,8 @@ export class LoginFacadeService {
 
   login(email: string, password: string) {
     return this.authService.login(email, password)
-      .pipe(tap(() => this.authStore.setAsLoggedIn()));
+      .pipe(
+        tap(() => this.authStore.setAsLoggedIn()));
 
   } 
    
