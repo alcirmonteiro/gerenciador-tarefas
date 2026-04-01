@@ -2,9 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonXsDirective } from 'src/app/shared/directives/button/button.directive';
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { AuthStoreService } from 'src/app/shared/stores/auth.store';
+import { LoginFacadeService } from 'src/app/shared/services/login-facade/login-facade.service';
 
 @Component({
   selector: 'app-login',
@@ -15,9 +14,8 @@ import { AuthStoreService } from 'src/app/shared/stores/auth.store';
 })
 export class LoginComponent {
 
-  authService = inject(AuthService); 
   router = inject(Router);
-  authStoreService = inject(AuthStoreService);
+  loginFacadeService = inject(LoginFacadeService);
 
   showAuthFailedMessage = signal(false);
 
@@ -41,10 +39,9 @@ export class LoginComponent {
     const email= this.form.value.email as string;
     const password = this.form.value.password as string;
 
-    this.authService.login(email, password)
+    this.loginFacadeService.login(email, password)
       .subscribe({
         next: () => {
-          this.authStoreService.setAsLoggedIn();
           this.router.navigateByUrl('/');
         },
         error: () => {
