@@ -3,16 +3,19 @@ import { TestBed } from '@angular/core/testing';
 import { AuthTokenManagerService } from './auth-token-manager.service';
 import { MockProvider } from 'ng-mocks';
 import { LocalStorageToken } from '../../tokens/local-storage.token';
+import exp from 'constants';
 
 describe('AuthTokenManagerService', () => {
   let service: AuthTokenManagerService;
   let storage: Storage;
+  const tokenKey = 'auth-token';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         MockProvider(LocalStorageToken, {
           setItem: jest.fn(),
+          getItem: jest.fn(),
         }),
       ],
     });
@@ -25,6 +28,18 @@ describe('AuthTokenManagerService', () => {
 
     service.setToken(fakeToken);
     
-    expect(storage.setItem).toHaveBeenCalledWith('auth-token', fakeToken);
+    expect(storage.setItem).toHaveBeenCalledWith(tokenKey, fakeToken);
+  });
+
+  it('deve recuperar o token do local storage', () => {
+    const fakeToken = 'fake-token';
+
+    (storage.getItem as jest.Mock).mockReturnValue(fakeToken);
+
+    const result = service.getToken();
+
+    expect(storage.getItem).toHaveBeenCalledWith(tokenKey);
+
+    expect(result).toBe(fakeToken);
   });
 });

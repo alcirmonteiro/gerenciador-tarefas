@@ -8,11 +8,17 @@ export class AuthTokenManagerService {
 
   #tokenKey = 'auth-token';
 
-  localStorageToken = inject(LocalStorageToken);
+  #localStorageToken = inject(LocalStorageToken);
 
   constructor() { }
 
   setToken(token: string): void {
-    this.localStorageToken.setItem(this.#tokenKey, token);
+    this.#localStorageToken.setItem(this.#tokenKey, token);
   };
+
+  getToken(): string | null {
+    return this.#localStorageToken.getItem(this.#tokenKey);
+  };
+
+  
 }
