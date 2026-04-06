@@ -27,58 +27,80 @@ describe('LoginFacadeService', () => {
     authTokenManagerService = TestBed.inject(AuthTokenManagerService);
   });
 
-  it('deve autenticar o usuário', fakeAsync(() => {
-    const fakeEmail = 'correto@dominio.com';
-    const fakePassword = '123456';
-    const fakeAuthToken = {token: 'fake-jwt-token'}
+  describe('login', () => {
+    it('deve autenticar o usuário', fakeAsync(() => {
+      const fakeEmail = 'correto@dominio.com';
+      const fakePassword = '123456';
+      const fakeAuthToken = {token: 'fake-jwt-token'}
 
-    let result: boolean | null = null;
+      let result: boolean | null = null;
 
-    (authService.login as jest.Mock).mockReturnValue(of( fakeAuthToken ));
+      (authService.login as jest.Mock).mockReturnValue(of( fakeAuthToken ));
 
-    service.login(fakeEmail, fakePassword).subscribe(() => {
-      result = true;
+      service.login(fakeEmail, fakePassword).subscribe(() => {
+        result = true;
+      });
+
+      tick();
+
+      expect(authService.login).toHaveBeenCalledWith(fakeEmail, fakePassword);
+
+      expect(authStoreService.setAsLoggedIn).toHaveBeenCalled();
+
+      expect(authTokenManagerService.setToken).toHaveBeenCalledWith(fakeAuthToken.token);
+      
+      expect(result).toBe(true);
+
+    }));
+
+    it('deve retornar um erro quando a autenticação falhar', fakeAsync(() => {
+      const fakeEmail = 'invalid@dominio.com';
+      const fakePassword = 'wrongpassword';
+
+      let result: HttpHeaderResponse | null = null;
+      (authService.login as jest.Mock).mockReturnValue(
+        throwError(() => new HttpHeaderResponse({ status: 401 }))
+      );
+
+      service.login(fakeEmail, fakePassword).subscribe({
+        error: (response) => {
+          result = response;
+        } 
+      });
+
+      tick();
+
+      expect(authService.login).toHaveBeenCalledWith(fakeEmail, fakePassword);
+
+      expect(authStoreService.setAsLoggedIn).not.toHaveBeenCalled();
+
+      expect((result as unknown as HttpErrorResponse).status).toBe(401);  
+
+      expect(authTokenManagerService.setToken).not.toHaveBeenCalled();
+    }));
+  });
+
+  describe('setAsLoggedInIfStorageTokenExists', () => {
+    it('deve autenticar o usuário', () => {
+
+      (authTokenManagerService.getToken as jest.Mock).mockReturnValue('fake-token');
+
+      service.setAsLoggedInIfStorageTokenExists();
+
+      expect(authTokenManagerService.getToken).toHaveBeenCalled();
+      expect(authStoreService.setAsLoggedIn).toHaveBeenCalled();
     });
 
-    tick();
+    it('não deve autenticar o usuário quando o token não existir', () => {
 
-    expect(authService.login).toHaveBeenCalledWith(fakeEmail, fakePassword);
+      (authTokenManagerService.getToken as jest.Mock).mockReturnValue(null);
 
-    expect(authStoreService.setAsLoggedIn).toHaveBeenCalled();
+      service.setAsLoggedInIfStorageTokenExists();
 
-    expect(authTokenManagerService.setToken).toHaveBeenCalledWith(fakeAuthToken.token);
-    
-    expect(result).toBe(true);
-
-  }));
-
-  it('deve retornar um erro quando a autenticação falhar', fakeAsync(() => {
-    const fakeEmail = 'invalid@dominio.com';
-    const fakePassword = 'wrongpassword';
-
-    let result: HttpHeaderResponse | null = null;
-    (authService.login as jest.Mock).mockReturnValue(
-      throwError(() => new HttpHeaderResponse({ status: 401 }))
-    );
-
-    service.login(fakeEmail, fakePassword).subscribe({
-      error: (response) => {
-        result = response;
-      } 
+      expect(authTokenManagerService.getToken).toHaveBeenCalled();
+      expect(authStoreService.setAsLoggedIn).not.toHaveBeenCalled();
     });
 
-    tick();
-
-    expect(authService.login).toHaveBeenCalledWith(fakeEmail, fakePassword);
-
-    expect(authStoreService.setAsLoggedIn).not.toHaveBeenCalled();
-
-    expect((result as unknown as HttpErrorResponse).status).toBe(401);  
-
-    expect(authTokenManagerService.setToken).not.toHaveBeenCalled();
-
-        
-
-  }));
-
+  });
+  
 });

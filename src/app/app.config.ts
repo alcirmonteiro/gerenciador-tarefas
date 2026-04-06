@@ -3,6 +3,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { addAuthorizationHeaderInterceptor } from './core/interceptors/add-authorization-header/add-authorization-header.interceptor';
+import { setAsLoggedInIfStorageTokenExistsInitializerProvider } from './core/initializers/set-as-logged-in-if-storage-token-existis/set-as-logged-in-if-storage-token-exists.initializer';
 
 
 
@@ -13,5 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([addAuthorizationHeaderInterceptor])
     ),
+    setAsLoggedInIfStorageTokenExistsInitializerProvider
   ],
 };

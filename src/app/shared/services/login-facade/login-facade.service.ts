@@ -18,7 +18,14 @@ export class LoginFacadeService {
         tap(() => this.authStore.setAsLoggedIn()),
         tap(({ token }) => this.authTokenManagerService.setToken(token)),
       );
-
   } 
+
+  setAsLoggedInIfStorageTokenExists() {
+    const token = this.authTokenManagerService.getToken();
+
+    if (token) {
+      this.authStore.setAsLoggedIn();
+    }
+  }
    
 }
