@@ -1,4 +1,4 @@
 @if (isLoggedIn$ | async) {
-  <button data-testid="header-logout">Sair</button>
+  <button appButtonXs="neutral" data-testid="header-logout" (click)="onLogout()">Sair</button>
 }
 

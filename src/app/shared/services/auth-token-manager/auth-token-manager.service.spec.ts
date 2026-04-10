@@ -16,6 +16,7 @@ describe('AuthTokenManagerService', () => {
         MockProvider(LocalStorageToken, {
           setItem: jest.fn(),
           getItem: jest.fn(),
+          removeItem: jest.fn(),
         }),
       ],
     });
@@ -42,4 +43,11 @@ describe('AuthTokenManagerService', () => {
 
     expect(result).toBe(fakeToken);
   });
+
+   it('deve remover o token do local storage', () => {
+    service.removeToken();
+    
+    expect(storage.removeItem).toHaveBeenCalledWith(tokenKey);
+  });
+
 });

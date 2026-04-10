@@ -4,33 +4,49 @@ import { TestHelper } from '@testing/helpers/test-helper';
 import { MockProvider } from 'ng-mocks';
 import { AuthStoreService } from 'src/app/shared/stores/auth.store';
 import { of } from 'rxjs';
+import { LogoutFacadeService } from 'src/app/shared/services/logout-facade/logout-facade.service';
 
-describe('LogoutComponent', () => {
-  let fixture: ComponentFixture<LogoutComponent>;
-  let testHelper: TestHelper<LogoutComponent>;
-  let authStoreService: AuthStoreService;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+async function setupTest( { isLoggedIn }: { isLoggedIn: boolean }) {
+  await TestBed.configureTestingModule({
       providers: [
-        MockProvider(AuthStoreService)        
+        MockProvider(AuthStoreService),
+        MockProvider(LogoutFacadeService)
       ],
       imports: [LogoutComponent],
     }).compileComponents();
 
-    authStoreService = TestBed.inject(AuthStoreService);
-     
-  });
+    const authStoreService = TestBed.inject(AuthStoreService);
+    const logoutFacadeService = TestBed.inject(LogoutFacadeService);
 
-  describe('Quando o usuário não estiver logado', () => {
-    it('não deve renderizar o botão de logout', () => {
-      (authStoreService.isLoggedIn$ as jest.Mock).mockReturnValue(of(false));
+    (authStoreService.isLoggedIn$ as jest.Mock).mockReturnValue(of(isLoggedIn));
 
-      fixture = TestBed.createComponent(LogoutComponent);
-      testHelper = new TestHelper<LogoutComponent>(fixture);
+      const fixture = TestBed.createComponent(LogoutComponent);
+      const testHelper = new TestHelper<LogoutComponent>(fixture);
       fixture.detectChanges();
+
+    return { testHelper, logoutFacadeService };
+}
+
+describe('LogoutComponent', () => {
+  describe('Quando o usuário não estiver logado', () => {
+    it('não deve renderizar o botão de logout',  async () => {
+
+      const { testHelper } = await setupTest({ isLoggedIn: false });
       
       expect(testHelper.queryByTestId('header-logout')).toBeNull();
+    });
+  });  
+
+    describe('Quando o usuário estiver logado', () => {
+    it('deve fazer logout', async () => {
+      const { testHelper, logoutFacadeService } = await setupTest({ isLoggedIn: true });
+      
+      expect(testHelper.queryByTestId('header-logout')).toBeTruthy();
+
+      testHelper.click('header-logout');
+
+      expect(logoutFacadeService.logout).toHaveBeenCalled();
+
     });
   });  
 
